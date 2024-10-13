@@ -4,11 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AgonesSDK" Version="1.41.0" />
-    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.247" />
+    <PackageReference Include="AgonesSDK" Version="1.44.0" />
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.279" />
   </ItemGroup>
 
 </Project>
