@@ -34,9 +34,15 @@ public class AgonesPlugin : BasePlugin
     [GameEventHandler]
     public HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
     {
+        CCSPlayerController? player = @event.Userid;
+        if (player == null) {
+            // TODO: LOG THIS! NEED TO FIGURE OUT IF / WHY THIS HAPPENS
+            return HookResult.Continue;
+        }
         shutdownTimer?.Kill();
         shutdownTimer = null;
-        Task.Run(async () => await agones.Beta().IncrementCounterAsync("players", 1));
+        //Task.Run(async () => await agones.Beta().IncrementCounterAsync("players", 1));
+        Task.Run(async () => await agones.Beta().AppendListValueAsync("players", player.AuthorizedSteamID?.SteamId64.ToString()));
 
         return HookResult.Continue;
     }
@@ -44,13 +50,24 @@ public class AgonesPlugin : BasePlugin
     [GameEventHandler]
     public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
     {
-        Task.Run(async () => await agones.Beta().DecrementCounterAsync("players", 1));
-        if (!Utilities.GetPlayers().Any()) {
+        CCSPlayerController? player = @event.Userid;
+        if (player == null) {
+            // TODO: LOG THIS! NEED TO FIGURE OUT IF / WHY THIS HAPPENS
+            return HookResult.Continue;
+        }
+        //Task.Run(async () => await agones.Beta().DecrementCounterAsync("players", 1));
+        Task.Run(async () => await agones.Beta().DeleteListValueAsync("players", player.AuthorizedSteamID?.SteamId64.ToString()));
+        if (PlayersConnected() == 0 && shutdownTimer == null) {
             shutdownTimer = AddTimer(60, () => {
                 Task.Run(async () => await agones.ShutDownAsync());
             });
         }
         
         return HookResult.Continue;
+    }
+
+    private static int PlayersConnected()
+    {
+        return Utilities.GetPlayers().Where(player => player.IsValid && !player.IsHLTV && !player.IsBot).Count();
     }
 }
