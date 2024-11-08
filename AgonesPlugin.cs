@@ -61,6 +61,9 @@ public class AgonesPlugin : BasePlugin
             // TODO: LOG THIS! NEED TO FIGURE OUT IF / WHY THIS HAPPENS
             return HookResult.Continue;
         }
+        if (player.IsBot || player.IsHLTV || !player.IsValid) {
+            return HookResult.Continue;
+        }
         //Task.Run(async () => await agones.Beta().DecrementCounterAsync("players", 1));
         Task.Run(async () => await agones.Beta().DeleteListValueAsync("players", player.AuthorizedSteamID?.SteamId64.ToString()));
         if (PlayersConnected() == 0 && shutdownTimer == null) {
