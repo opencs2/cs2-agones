@@ -14,20 +14,26 @@ public class AgonesPlugin : BasePlugin
     public override string ModuleVersion => "0.0.1";
     public override string ModuleAuthor => "krbtgt";
     public override string ModuleDescription => "Provides integration with Agones";
-    private AgonesSDK agones = new AgonesSDK();
+    private AgonesSDK agones;
     private CSSTimer? shutdownTimer;
     private CSSTimer? healthTimer;
+
+    public AgonesPlugin()
+    {
+        agones = new AgonesSDK(logger: Logger);
+    }
+
     public override void Load(bool hotReload)
     {
         healthTimer ??= AddTimer(1, () => {
             Task.Run(async () => await agones.HealthAsync());
         }, CSSTimerFlags.REPEAT);
+        Task.Run(async () => await agones.ReadyAsync());
     }
 
     [GameEventHandler]
     public HookResult OnServerSpawn(EventServerSpawn @event, GameEventInfo info)
     {
-        Task.Run(async () => await agones.ReadyAsync());
         return HookResult.Continue;
     }
 
@@ -62,7 +68,7 @@ public class AgonesPlugin : BasePlugin
                 Task.Run(async () => await agones.ShutDownAsync());
             });
         }
-        
+
         return HookResult.Continue;
     }
 
