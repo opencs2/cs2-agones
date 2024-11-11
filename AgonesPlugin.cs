@@ -26,6 +26,7 @@ public class AgonesPlugin : BasePlugin
 
     public override void Load(bool hotReload)
     {
+        RegisterListener<Listeners.OnMapStart>(OnMapStart);
 
         Logger.LogInformation("[AgonesPlugin] Load: starting SDK Health Check task");
         healthTimer ??= AddTimer(1, () => {
@@ -39,13 +40,6 @@ public class AgonesPlugin : BasePlugin
     [GameEventHandler]
     public HookResult OnServerSpawn(EventServerSpawn @event, GameEventInfo info)
     {
-        return HookResult.Continue;
-    }
-
-    [GameEventHandler]
-    public HookResult OnMapLoaded(EventGameNewmap @event, GameEventInfo info)
-    {
-        Task.Run(async() => await agones.SetLabelAsync("cs2-map", @event.Mapname));
         return HookResult.Continue;
     }
 
@@ -89,6 +83,12 @@ public class AgonesPlugin : BasePlugin
         }
 
         return HookResult.Continue;
+    }
+
+    private void  OnMapStart(string mapName)
+    {
+        Logger.LogInformation($"[AgonesPlugin] OnMapStart {mapName}");
+        Task.Run(async() => await agones.SetLabelAsync("cs2-map", mapName));
     }
 
     private static int PlayersConnected()
