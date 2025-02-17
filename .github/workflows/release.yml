@@ -1,0 +1,42 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: 
+      group: Default
+    env:
+      DOTNET_INSTALL_DIR: "./.dotnet"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Tarball
+      run: tar czf cs2-agones.tar.gz bin/Release/net8.0/
+    - name: Semantic Release
+      id: release
+      uses: cycjimmy/semantic-release-action@v3
+      with:
+        extra_plugins: |
+          @semantic-release/commit-analyzer
+          @semantic-release/release-notes-generator
+          @semantic-release/github
+          @semantic-release/git
+          @semantic-release/exec
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
