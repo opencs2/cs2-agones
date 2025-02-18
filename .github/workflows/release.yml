@@ -35,4 +35,4 @@ jobs:
       with:
         files: cs2-agones.tar.gz
         generate_release_notes: true
-        tag: ${{ inputs.tag }}
+        tag_name: ${{ inputs.tag }}
