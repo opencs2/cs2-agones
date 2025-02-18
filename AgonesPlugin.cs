@@ -12,7 +12,7 @@ namespace AgonesPlugin;
 public class AgonesPlugin : BasePlugin
 {
     public override string ModuleName => "AgonesPlugin";
-    public override string ModuleVersion => "0.0.3";
+    public override string ModuleVersion => "0.0.1";
     public override string ModuleAuthor => "krbtgt";
     public override string ModuleDescription => "Provides integration with Agones";
     private AgonesSDK agones;
