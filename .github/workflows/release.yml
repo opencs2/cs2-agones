@@ -27,15 +27,8 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Tarball
       run: tar czf cs2-agones.tar.gz bin/Release/net8.0/
-    - name: Semantic Release
-      id: release
-      uses: cycjimmy/semantic-release-action@v4.1.1
+    - name: Release
+      uses: softprops/action-gh-release@v2
       with:
-        extra_plugins: |
-          @semantic-release/commit-analyzer
-          @semantic-release/release-notes-generator
-          @semantic-release/github
-          @semantic-release/git
-          @semantic-release/exec
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        files: cs2-agones.tar.gz
+        generate_release_notes: true
