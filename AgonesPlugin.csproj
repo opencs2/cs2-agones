@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AgonesSDK" Version="1.44.0" />
-    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.279" />
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.340" />
   </ItemGroup>
 
 </Project>
